@@ -1,5 +1,12 @@
-.App {
-  text-align: center;
+.AppRoot {
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+  background: #FF6900; /* Just to visualize the extent */
 }
 
 .App-logo {
@@ -14,7 +21,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #FF6900;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -24,15 +31,5 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.NewGamePage {
 }

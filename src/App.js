@@ -3,17 +3,81 @@ import React, { useState } from 'react';
 import Stack from '@mui/material/Stack';
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import { Link, Outlet } from "react-router-dom"
+
+// TopNavBar
+import Box from '@mui/material/Box';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+
+// NG page
+import Grid from '@mui/material/Grid';
+
 import './App.css';
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-      <h1>Pool Game </h1>
-      < NewGameCollector />
-      </header>
+    <div className="AppRoot">
+      <GlobalNav />
+      <Outlet />
     </div>
   );
+}
+
+export function Home() {
+    return (
+        <div>
+          <h1>Home, this is a useless page.</h1>
+        </div>
+    );
+}
+
+function GlobalNav() {
+    return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+          </IconButton>
+          <Button variant="outlined">
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              <Link to="/">Home</Link>
+            </Typography>
+          </Button>
+          <Button color="inherit">
+            <Link to="/newgame">New Game</Link>
+          </Button>
+        </Toolbar>
+      </AppBar>
+    </Box>
+  );
+}
+
+
+export function NewGamePage () {
+    console.log('loaded????')
+    return (
+        <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            style={{minHeight: '100vh' }}
+        >
+              <h2>New Game Entry</h2>
+              <NewGameCollector/>
+        </Grid>
+    );
 }
 
 function NewGameCollector () {
@@ -23,16 +87,14 @@ function NewGameCollector () {
     const handlePost = () => {
         const requestOptions = {
             method: 'POST',
-            mode: 'no-cors',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'text/html',
                 'Access-Control-Allow-Origin': '*', 
             },
-            body: JSON.stringify({ winner, loser,}),
         };
-        fetch("http://localhost:8043", requestOptions)
+        fetch("http://127.0.0.1:5000/newgame?" + new URLSearchParams({ winner, loser, }), requestOptions)
             .then(res => res.json())
-            .then(data => console.log(data))
+            .then(res => console.log(res))
     };
     return (
         <Stack spacing={2} direction="row">
