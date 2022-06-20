@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify 
 from flask_cors import CORS, cross_origin
+import file_tasks
 
 app = Flask(__name__)
 CORS(app)
@@ -25,6 +26,13 @@ def get_stats():
     data['marin'] = 1
     return {'data': data}, 200
 
+@app.get('/player_list')
+def get_player_list():
+    print('called get players')
+    players = file_tasks.get_players().tolist()
+    data = dict()
+    data['players'] = players
+    return {'data': data}, 200
 
 
 if __name__ == '__main__':

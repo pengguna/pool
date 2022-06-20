@@ -1,7 +1,6 @@
 import logo from './logo.svg';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Stack from '@mui/material/Stack';
-import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { Link, Outlet } from "react-router-dom"
 
@@ -14,6 +13,10 @@ import Typography from '@mui/material/Typography';
 
 // NG page
 import Grid from '@mui/material/Grid';
+
+// Drop down
+import TextField from "@mui/material/TextField";
+import Select from '@mui/material/Autocomplete';
 
 import './App.css';
 
@@ -65,6 +68,19 @@ function GlobalNav() {
 
 export function NewGamePage () {
     console.log('loaded????')
+    const options = ['callum', 'johnny'];
+    const [players, setPlayers] = useState(['']);
+
+    useEffect(() => {
+        fetch("http://localhost:5000/player_list")
+            .then(res => res.json())
+            .then(res => {
+                // yikes this should be more robust
+                console.log(res.data.players)
+                setPlayers(res.data.players)
+            })
+    }, []);
+
     return (
         <Grid
             container
@@ -75,15 +91,16 @@ export function NewGamePage () {
             style={{minHeight: '100vh' }}
         >
               <h2>New Game Entry</h2>
-              <NewGameCollector/>
+              <NewGameCollector players={players}/>
         </Grid>
     );
 }
 
-function NewGameCollector () {
+function NewGameCollector (props) {
 
     const [winner, setWinner] = useState('');
     const [loser, setLoser] = useState('');
+
     const handlePost = () => {
         const requestOptions = {
             method: 'POST',
@@ -98,11 +115,36 @@ function NewGameCollector () {
     };
     return (
         <Stack spacing={2} direction="row">
-            <TextField id="outlined-basic" label="Winner" variant="outlined" value={winner} onChange={(e) => {setWinner(e.target.value)}} />
-            <TextField id="outlined-basic" label="Loser" variant="outlined" value={loser} onChange={(e) => {setLoser(e.target.value)}} />
+            <ControllableInput label="Winner" players={props.players} value={winner} setValue={setWinner}/>
+            <ControllableInput label="Loser" players={props.players} value={loser} setValue={setLoser}/>
             <Button variant="outlined" onClick={handlePost}>Submit</Button>
         </Stack>
     )
+}
+
+function ControllableInput (props) {
+  const [value, setValue] = React.useState(props.players[0]);
+  const [inputValue, setInputValue] = React.useState('');
+
+  return (
+    <div>
+      <Select
+        value={value}
+        onChange={(event, newValue) => {
+          setValue(newValue);
+          props.setValue(newValue);
+        }}
+        inputValue={inputValue}
+        onInputChange={(event, newInputValue) => {
+          setInputValue(newInputValue);
+        }}
+        id="controllable-states-demo"
+        options={props.players}
+        sx={{ width: 200 }}
+        renderInput={(params) => <TextField {...params} label="Winner" />}
+      />
+    </div>
+  );
 }
 
 export default App;
