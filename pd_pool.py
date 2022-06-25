@@ -79,30 +79,41 @@ class Player:
             print(k, v.total, v.wins)
         print()
 
-def debug(msg):
-    IS_DEBUG = True
-    if IS_DEBUG:
-        print(msg)
+    def serialise(self):
+        data = dict()
+        data['elo'] = self.elo
+        data['name'] = self.name
+        data['games'] = dict()
+        for k, v in self.games.items():
+            data['games'][k] = dict()
+            data['games'][k]['total'] = v.total
+            data['games'][k]['wins'] = v.wins
+        return data
 
-def get_players():
-    df = pd.read_csv("history", sep=" ", names=["date", "winner", "loser"])
-    df = df.set_index('date')
-    return pd.unique(df[['winner','loser']].values.ravel('K')).tolist()
+class PoolHandler:
+    def __init__(self):
+        self._construct_players() 
+        
 
+    def _construct_players(self):
+        # first just get a list of everyone.
+        df = pd.read_csv("history", sep=" ", names=["date", "winner", "loser"])
+        df = df.set_index('date')
+        self.player_names = pd.unique(df[['winner','loser']].values.ravel('K')).tolist()
 
-all_matches = df.groupby(df.columns.tolist(), as_index=False).size()
+        self.all_players = dict()
 
-all_players = dict()
-for p in get_players():
-    debug("creating player " + p)
-    all_players[p] = Player(p)
+        for p in self.player_names:
+            self.all_players[p] = Player(p)
+        
+        # now need to add all the games.
+        all_matches = df.groupby(df.columns.tolist(), as_index=False).size()
+        for i, r in all_matches.iterrows():
+            self.all_players[r.loc['winner']].add_games(r.loc['loser'], r.loc['size'], r.loc['size'])
+            self.all_players[r.loc['loser']].add_games(r.loc['winner'], 0, r.loc['size'])
 
-for i, r in all_matches.iterrows():
-    all_players[r.loc['winner']].add_games(r.loc['loser'], r.loc['size'], r.loc['size'])
-    all_players[r.loc['loser']].add_games(r.loc['winner'], 0, r.loc['size'])
-
-
-for k,v in all_players.items():
-    v.print()
-
+    def get_player(self, name):
+        if name in self.player_names:
+            return self.all_players[name]
+        return None
 

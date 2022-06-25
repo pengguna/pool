@@ -1,9 +1,13 @@
 from flask import Flask, request, jsonify 
 from flask_cors import CORS, cross_origin
 import file_tasks
+import pd_pool
 
 app = Flask(__name__)
 CORS(app)
+
+
+pool_handler = pd_pool.PoolHandler()
 
 @app.post('/newgame')
 def apply_newgame():
@@ -16,6 +20,21 @@ def apply_newgame():
         response = jsonify(response)
         response.status_code = 200
         return response
+    else:
+        return showMessage()
+
+@app.get('/player')
+def get_player():
+    args = request.args
+    player_name = args.get('name')
+    if player_name:
+        player = pool_handler.get_player(player_name)
+
+        if player:
+            response = player.serialise()
+            response = jsonify(response)
+            response.status_code = 200
+            return response
     else:
         return showMessage()
 
@@ -35,9 +54,6 @@ def get_player_list():
     return {'data': data}, 200
 
 
-if __name__ == '__main__':
-    app.run(host='localhost', port=5000);
-
 @app.errorhandler(404)
 def showMessage(error=None):
     message = {
@@ -47,3 +63,7 @@ def showMessage(error=None):
     response = jsonify(message) # unnecessary?
     response.status_code = 404
     return response
+
+if __name__ == '__main__':
+    app.run(host='localhost', port=5000);
+
