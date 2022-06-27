@@ -16,10 +16,16 @@ def apply_newgame():
     loser = args.get('loser')
 
     if winner and loser:
-        response = {'beep': 'boop'}
-        response = jsonify(response)
-        response.status_code = 200
-        return response
+        try:
+            pool_handler.new_game(winner, loser)
+            response = {'beep': 'boop'}
+            response[winner] = pool_handler.get_player(winner).elo
+            response[loser] = pool_handler.get_player(loser).elo
+            response = jsonify(response)
+            response.status_code = 200
+            return response
+        except Exception as e:
+            return showMessage(e)
     else:
         return showMessage()
 
@@ -27,16 +33,18 @@ def apply_newgame():
 def get_player():
     args = request.args
     player_name = args.get('name')
+
     if player_name:
         player = pool_handler.get_player(player_name)
 
         if player:
             response = player.serialise()
+            print(response)
             response = jsonify(response)
             response.status_code = 200
             return response
-    else:
-        return showMessage()
+
+    return showMessage()
 
 @app.get('/stats')
 def get_stats():
@@ -56,6 +64,7 @@ def get_player_list():
 
 @app.errorhandler(404)
 def showMessage(error=None):
+    print(error)
     message = {
         'status': 404,
         'message': 'a lil oopsy woopsy: ' + request.url,
