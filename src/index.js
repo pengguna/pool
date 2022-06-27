@@ -2,7 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import { Home, NewGamePage, PlayerStatsPage }  from './App';
+import { Home }  from './App';
+import NewGamePage from './NewGamePage.js';
+import PlayerStatsPage from './PlayerStatsPage.js';
+import AllStatsPage from './AllStatsPage.js';
 import reportWebVitals from './reportWebVitals';
 import {
     BrowserRouter,
@@ -21,6 +24,8 @@ root.render(
         <Route path="newgame" element={<NewGamePage />}>
         </Route>
         <Route path="player" element={<PlayerStatsPage />}>
+        </Route>
+        <Route path="stats" element={<AllStatsPage />}>
         </Route>
       </Route>
     </Routes>
