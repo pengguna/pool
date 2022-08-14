@@ -67,6 +67,18 @@ def get_leaderboard():
     except Exception as e:
         return showMessage(e)
 
+@app.get('/historical_elo')
+def get_historical_elo():
+    try:
+        historical_elo = pool_handler.get_historical_elo()
+        response = {'data' : historical_elo}
+        response = jsonify(response)
+        response.status_code = 200
+        return response
+    except Exception as e:
+        return showMessage(e)
+
+
 @app.get('/player_list')
 def get_player_list():
     print('called get players')

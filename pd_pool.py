@@ -145,8 +145,6 @@ class EloCalculator:
 
     def _update_game(self):
         self._delta = self._updated_score(self._expected_score())
-        print("delta: ", self.delta)
-
 
     @property
     def delta(self):
@@ -246,6 +244,47 @@ class PoolHandler:
                 _assert_player(loser_name)
 
                 self.new_game(winner_name, loser_name, True)
+
+    def get_historical_elo(self):
+
+        df = pd.read_csv('history', sep= ' ', header=None, names=['Date', 'Winner', 'Loser'])
+        df['Date'] = pd.to_datetime(df['Date'])
+        df = df.set_index('Date')
+        # this is bad, really this should throw. Should NEVER be the case.
+        df = df.sort_index()
+
+        elo = {}
+        time_series = [] # js will interpret better if it's an array of dicts. 
+
+        def _assert_players(*players):
+            for p in players:
+                if p not in elo:
+                    elo[p] = Player(p)
+
+        for date in pd.date_range(df.index[0], df.index[-1], freq="d"):
+            if date in df.index:
+                time_point = {'date': str(date.date())}
+                day = df.loc[date]
+
+                for i, r in day.iterrows():
+                    _assert_players(r['Winner'], r['Loser'])
+                    winner = elo[r['Winner']]
+                    loser = elo[r['Loser']]
+
+                    calc = EloCalculator(winner, loser)
+                    delta = calc.delta
+                    winner.elo += delta
+                    loser.elo -= delta
+
+                    winner.add_games(loser, 1) 
+                    loser.add_games(winner, 0) 
+
+                for k,v in elo.items():
+                    time_point[k] = v.elo
+
+                time_series.append(time_point)
+
+        return {'names': [name for name in elo.keys()], 'data': time_series}
 
     def new_game(self, winner_name, loser_name, replay_mode=False):
         print('in ng')

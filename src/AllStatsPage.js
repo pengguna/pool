@@ -10,15 +10,18 @@ import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 
+// Historical Chart
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
 export default function AllStatsPage () {
     const [leaderboard, setLeaderboard] = useState(['']);
+    const [historicalElo, setHistorical] = useState({});
 
     useEffect(() => {
         fetch("http://localhost:5000/leaderboard")
             .then(res => res.json())
             .then(res => {
                 // yikes this should be more robust
-                console.log(res.data)
                 if (res.data)
                 {
                     res.data.sort((a,b) => a[1] < b[1])
@@ -26,9 +29,18 @@ export default function AllStatsPage () {
                 }
                 else
                 {
+                    console.log('weird res is: ', res)
                     setLeaderboard({ no: 1}) // probably not how to construct anon.
                 }
             })
+        // also need wr data
+        fetch("http://localhost:5000/historical_elo")
+            .then(res => res.json())
+            .then(res => {
+                console.log(res.data)
+                setHistorical(res.data)
+            })
+            
     }, []);
 
     return (
@@ -43,7 +55,7 @@ export default function AllStatsPage () {
               <h1>All Stats</h1>
             <Stack spacing={2} direction="column">
                 <EloTable leaderboard={leaderboard} />
-                <h2>Win Rates</h2>
+                <HistoricalElo historicalElo={historicalElo} />
             </Stack>
         </Grid>
     );
@@ -83,3 +95,57 @@ function EloTable (props)
         </Stack>
     );
 }
+
+
+function HistoricalElo (props)
+{
+    const data = props.historicalElo
+
+    return Object.keys(data).length > 0 ?
+        (
+            <LineChart
+                width={500}
+                height={300}
+                data={data.data}
+                margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                }}
+            >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {data.names.map(name => (
+                    <Line key={name} type="monotone" dataKey={name} />
+                ))}
+            </LineChart>
+        ) 
+    :
+        (<div>lil fucked up bit of data here...</div>)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
