@@ -6,6 +6,9 @@ import pd_pool
 app = Flask(__name__)
 CORS(app)
 
+# TODO: add a generic response handle
+# make it return the data passed under a data tag
+# and wrap in a try except.
 
 pool_handler = pd_pool.PoolHandler()
 
@@ -52,6 +55,17 @@ def get_stats():
     data['callum'] = 2000
     data['marin'] = 1
     return {'data': data}, 200
+
+@app.get('/leaderboard')
+def get_leaderboard():
+    try:
+        board = pool_handler.get_leaderboard()
+        response = {'data' : board}
+        response = jsonify(response)
+        response.status_code = 200
+        return response
+    except Exception as e:
+        return showMessage(e)
 
 @app.get('/player_list')
 def get_player_list():

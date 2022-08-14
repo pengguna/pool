@@ -89,6 +89,18 @@ class Player:
             print(k, v.total, v.wins)
         print()
 
+    def get_total_games(self):
+        total = 0
+        for k, v in self.games.items():
+            total += v.total
+        return total
+
+    def get_winrate(self, opp):
+        # takes a string, see if exists
+        if opp in self.games:
+            return self.games[opp].wins / self.games[opp].total
+        return None
+
     def serialise(self):
         data = dict()
         data['elo'] = self._elo
@@ -150,6 +162,7 @@ class EloCalculator:
 class PoolHandler:
     def __init__(self):
         self._BASE_PATH = os.path.dirname(os.path.abspath(__file__))
+        self._MIN_GAMES = 10
         self.replay_history()
         
     # def _construct_players(self):
@@ -195,8 +208,27 @@ class PoolHandler:
         with open(self._BASE_PATH + '/' + 'history', 'a') as f:
             f.write(dt + ' ' + winner.name + ' ' + loser.name + '\n')
 
-    # def get_winrate_table(self):
-    #     # want to construct a table of relative win rates.
+    def get_winrate_table(self):
+        # want to construct a table of relative win rates.
+        player_order = set(self.all_players.keys())
+
+        for player in self.all_players:
+            if player.get_total_games() < self._MIN_GAMES:
+                player_order.remove(player.name)
+
+        # untested, still need the header.
+        display = ""
+        for player in self.all_players:
+            msg_line = player.name + ":\t"
+            for opp in player_order:
+                wr = player.get_winrate(opp)
+                if wr:
+                    msg_line += str(round(wr*100,1))
+                msg_line += '\t'
+            display += msg_line + '\n'
+
+        return display
+
 
     def replay_history(self):
 
@@ -237,33 +269,6 @@ class PoolHandler:
 
         if not replay_mode:
             self.write_game(winner, loser)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

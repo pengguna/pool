@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Stack from '@mui/material/Stack';
 import Button from "@mui/material/Button";
 import Grid from '@mui/material/Grid';
+import { Navigate } from "react-router-dom";
 
 // Drop down
 import TextField from "@mui/material/TextField";
 import Select from '@mui/material/Autocomplete';
 
-export default function NewGamePage () {
+export default function NewGamePage (props) {
+    console.log('uhh')
+    console.log(props)
     const [players, setPlayers] = useState(['']);
 
     useEffect(() => {
@@ -38,6 +41,7 @@ function NewGameCollector (props) {
 
     const [winner, setWinner] = useState('');
     const [loser, setLoser] = useState('');
+    const [submitted, setSubmission] = useState(false);
 
     const handlePost = () => {
         const requestOptions = {
@@ -50,14 +54,20 @@ function NewGameCollector (props) {
         fetch("http://127.0.0.1:5000/newgame?" + new URLSearchParams({ winner, loser, }), requestOptions)
             .then(res => res.json())
             .then(res => console.log(res))
+            .then(res => setSubmission(true))
     };
-    return (
+    return submitted ? 
+        (<Navigate to='/stats' replace={true} />) 
+    :
+            (
         <Stack spacing={2} direction="row">
             <ControllableInput label="Winner" players={props.players} value={winner} setValue={setWinner}/>
             <ControllableInput label="Loser" players={props.players} value={loser} setValue={setLoser}/>
             <Button variant="outlined" onClick={handlePost}>Submit</Button>
         </Stack>
-    )
+           )
+        
+    
 }
 
 function ControllableInput (props) {

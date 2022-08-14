@@ -6,12 +6,16 @@
   bottom: 0;
   right: 0;
   overflow: auto;
-  background: #FF6900; /* Just to visualize the extent */
+  background: rgb(123,123,123); /* Just to visualize the extent */
 }
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+.NavBar {
+    background-color: rgb(150, 47, 30)
 }
 
 @media (prefers-reduced-motion: no-preference) {
