@@ -60,7 +60,7 @@ function AllPlayersList (props)
 
   return (
     <Box 
-      sx={{ borderRadius: '16px', border: 1}}
+      sx={{ borderRadius: '16px', border: 1, height: '100%'}}
       >
       <List>
       {props.players.map(player => {

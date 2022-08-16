@@ -104,13 +104,14 @@ function HistoricalElo (props)
     return (data && Object.keys(data).length) > 0 ?
         (
             <LineChart
+                style={{background:'white'}}
                 width={500}
                 height={300}
                 data={data.data}
                 margin={{
-                    top: 5,
+                    top: 30,
                     right: 30,
-                    left: 20,
+                    left: 15,
                     bottom: 5,
                 }}
             >

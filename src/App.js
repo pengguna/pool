@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from "@mui/material/Button";
-import { Link, Outlet } from "react-router-dom"
+import {  Outlet } from "react-router-dom"
+import Link from "@mui/material/Link";
 import {createTheme, ThemeProvider } from '@mui/material/styles'
 
 // TopNavBar
@@ -44,32 +45,23 @@ export function Home() {
     );
 }
 
+// TODO: these should really be color="inherit" but for somereason that's red...
 function GlobalNav() {
     return (
     <Box sx={{ flexGrow: 1 }} className="NavBar">
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-          </IconButton>
-          <Button variant="outlined">
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              <Link to="/">Home</Link>
-            </Typography>
+          <Button> 
+            <Link href="/" color="rgb(255,255,255)" underline="hover" variant="h5">Home</Link>
           </Button>
           <Button>
-            <Link to="/newgame">New Game</Link>
+            <Link href="/newgame" color="rgb(255,255,255)" underline="hover">New Game</Link>
           </Button>
           <Button>
-            <Link to="/player">Player Stats</Link>
+            <Link href="/player" color="rgb(255,255,255)" underline="hover">Player Stats</Link>
           </Button>
           <Button>
-            <Link to="/stats">All Stats</Link>
+            <Link href="/stats" color="rgb(255,255,255)" underline="hover">All Stats</Link>
           </Button>
         </Toolbar>
       </AppBar>
