@@ -7,18 +7,15 @@ import { Navigate } from "react-router-dom";
 // Drop down
 import TextField from "@mui/material/TextField";
 import Select from '@mui/material/Autocomplete';
+import DataFetcher from './DataFetcher';
 
 export default function NewGamePage (props) {
-    console.log('uhh')
-    console.log(props)
     const [players, setPlayers] = useState(['']);
 
     useEffect(() => {
-        fetch("http://localhost:5000/player_list")
-            .then(res => res.json())
+        DataFetcher("player_list")
             .then(res => {
-                // yikes this should be more robust
-                setPlayers(res.data.players)
+                setPlayers(res.players)
             })
     }, []);
 
@@ -51,9 +48,8 @@ function NewGameCollector (props) {
                 'Access-Control-Allow-Origin': '*', 
             },
         };
-        fetch("http://127.0.0.1:5000/newgame?" + new URLSearchParams({ winner, loser, }), requestOptions)
-            .then(res => res.json())
-            .then(res => console.log(res))
+        // TODO: add these in as some other shit
+        DataFetcher("newgame?" + new URLSearchParams({ winner, loser, }), requestOptions)
             .then(res => setSubmission(true))
     };
     return submitted ? 

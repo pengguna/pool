@@ -13,34 +13,32 @@ import TableRow from '@mui/material/TableRow';
 // Historical Chart
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+import DataFetcher from "./DataFetcher.js";
+
 export default function AllStatsPage () {
     const [leaderboard, setLeaderboard] = useState(['']);
     const [historicalElo, setHistorical] = useState({});
 
     useEffect(() => {
-        fetch("http://localhost:5000/leaderboard")
-            .then(res => res.json())
+        DataFetcher('leaderboard')
             .then(res => {
                 // yikes this should be more robust
-                if (res.data)
+                if (res)
                 {
-                    res.data.sort((a,b) => a[1] < b[1])
-                    setLeaderboard(res.data)
+                    res.sort((a,b) => a[1] < b[1])
+                    setLeaderboard(res)
                 }
                 else
                 {
                     console.log('weird res is: ', res)
-                    setLeaderboard({ no: 1}) // probably not how to construct anon.
+                    setLeaderboard({ no: 1}) 
                 }
             })
         // also need wr data
-        fetch("http://localhost:5000/historical_elo")
-            .then(res => res.json())
+        DataFetcher('historical_elo')
             .then(res => {
-                console.log(res.data)
-                setHistorical(res.data)
+                setHistorical(res)
             })
-            
     }, []);
 
     return (
@@ -68,7 +66,7 @@ function EloTable (props)
 
                     //<TableCell align="right">{(100*(games[opp].wins/games[opp].total)).toFixed(2)}</TableCell>
     const data = props.leaderboard
-    return (
+    return (data && (data.length > 0)) ? (
       <Stack spacing={2}> 
           <h2>Elo Table</h2>
           <TableContainer>
@@ -93,7 +91,9 @@ function EloTable (props)
             </Table>
           </TableContainer>
         </Stack>
-    );
+    )
+    :
+        (<div>oopsie woopsie lil fucky wucky</div>);
 }
 
 
@@ -101,7 +101,7 @@ function HistoricalElo (props)
 {
     const data = props.historicalElo
 
-    return Object.keys(data).length > 0 ?
+    return (data && Object.keys(data).length) > 0 ?
         (
             <LineChart
                 width={500}

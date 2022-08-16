@@ -17,17 +17,17 @@ import TableRow from '@mui/material/TableRow';
 
 // extra
 import Box from '@mui/material/Box';
+import DataFetcher from "./DataFetcher";
 
 export default function PlayerStatsPage () {
     const [player, choosePlayer] = useState('noSelection');
     const [players, setPlayers] = useState(['']);
 
     useEffect(() => {
-        fetch("http://localhost:5000/player_list")
-            .then(res => res.json())
+        DataFetcher("player_list")
             .then(res => {
                 // yikes this should be more robust
-                setPlayers(res.data.players)
+                setPlayers(res.players)
             })
     }, []);
 
@@ -97,20 +97,15 @@ function PlayerSpecificStats (props)
     //     }
     // };
     useEffect(() => {
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'text/html',
-                'Access-Control-Allow-Origin': '*', 
-            },
-        };
-
         // FIXME: better noSelection handling. This string is trash.
         if (props.player !== 'noSelection')
         {
-            fetch("http://127.0.0.1:5000/player?" + new URLSearchParams({ name: props.player, }), requestOptions)
-                .then(res => res.json())
-                .then(res => setPlayerData(res))
+            DataFetcher("player?" + new URLSearchParams({ name: props.player, }))
+                .then(res => 
+                    {
+                        console.log(res)
+                        setPlayerData(res)
+                    })
         }
     }, [props.player]);
     return (

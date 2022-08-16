@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify 
 from flask_cors import CORS, cross_origin
 import file_tasks
+import json
 import pd_pool
 
 app = Flask(__name__)
@@ -41,8 +42,7 @@ def get_player():
         player = pool_handler.get_player(player_name)
 
         if player:
-            response = player.serialise()
-            print(response)
+            response = {'data': player.serialise()}
             response = jsonify(response)
             response.status_code = 200
             return response
@@ -99,6 +99,10 @@ def showMessage(error=None):
     response.status_code = 404
     return response
 
+
 if __name__ == '__main__':
-    app.run(host='localhost', port=5000);
+    with open('src/config.json', 'r') as f:
+        config = json.load(f)
+
+    app.run(host=config['FLASK_URL'], port=config['FLASK_PORT']);
 
