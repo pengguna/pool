@@ -13,6 +13,10 @@ import TableRow from '@mui/material/TableRow';
 // Historical Chart
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+
+// Take Two at charts
+import { VictoryChart, VictoryLine } from 'victory';
+
 import DataFetcher from "./DataFetcher.js";
 
 export default function AllStatsPage () {
@@ -37,6 +41,7 @@ export default function AllStatsPage () {
         // also need wr data
         DataFetcher('historical_elo')
             .then(res => {
+                console.log(res)
                 setHistorical(res)
             })
     }, []);
@@ -53,10 +58,11 @@ export default function AllStatsPage () {
               <h1>All Stats</h1>
             <Stack spacing={2} direction="column">
                 <EloTable leaderboard={leaderboard} />
-                <HistoricalElo historicalElo={historicalElo} />
+                <VictoryHistoricalElo user_data={historicalElo} />
             </Stack>
         </Grid>
     );
+                // <HistoricalElo historicalElo={historicalElo} />
 }
 
 
@@ -96,17 +102,32 @@ function EloTable (props)
         (<div>oopsie woopsie lil fucky wucky</div>);
 }
 
-
+function VictoryHistoricalElo (props)
+{
+    // arr of arrs of {x,y} data
+    const user_data = props.user_data;
+    if (user_data&& Object.keys(user_data).length > 0)
+    {
+        const ppl = user_data.names.map(name=> user_data.data.map(data => ({x:data['date'], y:data[name]})))
+        return (
+            <VictoryChart>
+                {ppl.map(arr => (<VictoryLine data={arr}/>))}
+            </VictoryChart>
+        )
+    }
+    return (<div>no datas :( </div>)
+}
 function HistoricalElo (props)
 {
     const data = props.historicalElo
+    // have .names and .data
 
     return (data && Object.keys(data).length) > 0 ?
         (
             <LineChart
                 style={{background:'white'}}
-                width={500}
-                height={300}
+                width={3*500}
+                height={3*300}
                 data={data.data}
                 margin={{
                     top: 30,

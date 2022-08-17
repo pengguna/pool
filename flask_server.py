@@ -104,5 +104,5 @@ if __name__ == '__main__':
     with open('src/config.json', 'r') as f:
         config = json.load(f)
 
-    app.run(host=config['FLASK_URL'], port=config['FLASK_PORT']);
+    app.run(host=config['FLASK_HOST'], port=config['FLASK_PORT']);
 

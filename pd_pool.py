@@ -264,7 +264,8 @@ class PoolHandler:
         for date in pd.date_range(df.index[0], df.index[-1], freq="d"):
             if date in df.index:
                 time_point = {'date': str(date.date())}
-                day = df.loc[date]
+                # bit gross but .loc yields a series for single entries otherwise
+                day = df.loc[date:date]
 
                 for i, r in day.iterrows():
                     _assert_players(r['Winner'], r['Loser'])
