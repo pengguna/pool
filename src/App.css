@@ -6,7 +6,7 @@
   bottom: 0;
   right: 0;
   overflow: auto;
-  background: rgb(123,123,123); /* Just to visualize the extent */
+  background: rgb(230, 230, 230); /* Just to visualize the extent */
 }
 
 .App-logo {

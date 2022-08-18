@@ -254,16 +254,18 @@ class PoolHandler:
         df = df.sort_index()
 
         elo = {}
-        time_series = [] # js will interpret better if it's an array of dicts. 
+        time_series = {} # js will interpret better if it's an array of dicts. 
 
         def _assert_players(*players):
             for p in players:
                 if p not in elo:
                     elo[p] = Player(p)
+                if p not in time_series:
+                    time_series[p] = []
 
         for date in pd.date_range(df.index[0], df.index[-1], freq="d"):
             if date in df.index:
-                time_point = {'date': str(date.date())}
+                # time_point = {'date': str(date.date())}
                 # bit gross but .loc yields a series for single entries otherwise
                 day = df.loc[date:date]
 
@@ -281,11 +283,15 @@ class PoolHandler:
                     loser.add_games(winner, 0) 
 
                 for k,v in elo.items():
-                    time_point[k] = v.elo
+                    time_series[k].append({'time': date.timestamp(), 'elo':v.elo })
+                    # time_point[k] = v.elo
 
-                time_series.append(time_point)
+                # time_series.append(time_point)
 
-        return {'names': [name for name in elo.keys()], 'data': time_series}
+        # want it to look like:
+        # data.name = [ {time:, elo:}]
+        # return {'names': [name for name in elo.keys()], 'data': time_series}
+        return time_series
 
     def new_game(self, winner_name, loser_name, replay_mode=False):
         print('in ng')

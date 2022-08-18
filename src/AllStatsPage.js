@@ -13,9 +13,8 @@ import TableRow from '@mui/material/TableRow';
 // Historical Chart
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-
 // Take Two at charts
-import { VictoryChart, VictoryLine } from 'victory';
+import { VictoryChart, VictoryLine, VictoryTheme, VictoryVoronoiContainer, VictoryGroup, VictoryTooltip, VictoryScatter} from 'victory';
 
 import DataFetcher from "./DataFetcher.js";
 
@@ -104,19 +103,39 @@ function EloTable (props)
 
 function VictoryHistoricalElo (props)
 {
-    // arr of arrs of {x,y} data
     const user_data = props.user_data;
     if (user_data&& Object.keys(user_data).length > 0)
     {
-        const ppl = user_data.names.map(name=> user_data.data.map(data => ({x:data['date'], y:data[name]})))
         return (
-            <VictoryChart>
-                {ppl.map(arr => (<VictoryLine data={arr}/>))}
+            <VictoryChart 
+            theme={VictoryTheme.material}
+            containerComponent={<VictoryVoronoiContainer/>}
+            >
+                {Object.keys(user_data).map(name => (
+                    <VictoryGroup
+                        color={"#"+Math.floor(Math.random()*16777215).toString(16)}
+                        labels={({datum}) => `${name}: ${datum.elo}`}
+                        tickFormat={({datum}) => new Date(datum.time).getDate()}
+                        labelComponent={
+                            <VictoryTooltip
+                                style={{ fontSize: 10 }}
+                            />
+                        }
+                        data={user_data[name]}
+                        key={name}
+                        x="time"
+                        y="elo"
+                    >
+                    <VictoryLine x="time" y="elo" />
+                    <VictoryScatter x="time" y="elo" />
+                </VictoryGroup>
+                ))}
             </VictoryChart>
         )
     }
     return (<div>no datas :( </div>)
 }
+
 function HistoricalElo (props)
 {
     const data = props.historicalElo
