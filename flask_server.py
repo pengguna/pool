@@ -67,6 +67,17 @@ def get_leaderboard():
     except Exception as e:
         return showMessage(e)
 
+@app.get('/history')
+def get_history():
+    try:
+        response = {'data': pool_handler.history()}
+        response = jsonify(response)
+        response.status_code = 200
+        return response
+    except Exception as e:
+        return showMessage(e)
+
+
 @app.get('/historical_elo')
 def get_historical_elo():
     try:

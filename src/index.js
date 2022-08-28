@@ -6,6 +6,7 @@ import { Home }  from './App';
 import NewGamePage from './NewGamePage.js';
 import PlayerStatsPage from './PlayerStatsPage.js';
 import AllStatsPage from './AllStatsPage.js';
+import HistoryPage from './HistoryPage.js';
 import reportWebVitals from './reportWebVitals';
 import {
     BrowserRouter,
@@ -25,7 +26,7 @@ root.render(
         </Route>
         <Route path="player" element={<PlayerStatsPage />}>
         </Route>
-        <Route path="stats" element={<AllStatsPage />}>
+        <Route path="history" element={<HistoryPage />}>
         </Route>
       </Route>
     </Routes>

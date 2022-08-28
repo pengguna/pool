@@ -10,11 +10,16 @@ import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 
-// Historical Chart
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
 // Take Two at charts
-import { VictoryChart, VictoryLine, VictoryTheme, VictoryVoronoiContainer, VictoryGroup, VictoryTooltip, VictoryScatter} from 'victory';
+import { VictoryChart, 
+    VictoryAxis,
+    VictoryGroup, 
+    VictoryLine, 
+    VictoryScatter,
+    VictoryTheme, 
+    VictoryTooltip, 
+    VictoryVoronoiContainer, 
+} from 'victory';
 
 import DataFetcher from "./DataFetcher.js";
 
@@ -159,63 +164,15 @@ function VictoryHistoricalElo (props)
                     <VictoryScatter x="time" y="elo" />
                 </VictoryGroup>
                 ))}
+                <VictoryAxis
+                    tickFormat={t =>  {
+                        const dp = new Date(t*1000);
+                        return (`${dp.getUTCMonth() +1}/${dp.getUTCDate()}`);
+                    }}
+                />
             </VictoryChart>
         )
+        // n.b. will need to use tickValues={}. just not sure how this behaves and dont have data rn.
     }
     return (<div>no datas :( </div>)
 }
-
-function HistoricalElo (props)
-{
-    const data = props.historicalElo
-    // have .names and .data
-
-    return (data && Object.keys(data).length) > 0 ?
-        (
-            <LineChart
-                style={{background:'white'}}
-                width={3*500}
-                height={3*300}
-                data={data.data}
-                margin={{
-                    top: 30,
-                    right: 30,
-                    left: 15,
-                    bottom: 5,
-                }}
-            >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                {data.names.map(name => (
-                    <Line key={name} type="monotone" dataKey={name} />
-                ))}
-            </LineChart>
-        ) 
-    :
-        (<div>lil fucked up bit of data here...</div>)
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

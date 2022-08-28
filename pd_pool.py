@@ -293,6 +293,10 @@ class PoolHandler:
         # return {'names': [name for name in elo.keys()], 'data': time_series}
         return time_series
 
+    def history(self):
+        f = open(self._BASE_PATH + '/' + 'history', 'r')
+        return [l.rstrip() for l in f.readlines()]
+
     def new_game(self, winner_name, loser_name, replay_mode=False):
         print('in ng')
         if (winner_name not in self.all_players) or (loser_name not in self.all_players):

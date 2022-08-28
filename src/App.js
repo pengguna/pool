@@ -10,6 +10,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 
 import './App.css';
+import AllStatsPage from './AllStatsPage.js';
 
 
 const theme = createTheme({
@@ -37,9 +38,7 @@ function App() {
 
 export function Home() {
     return (
-        <div>
-          <h1>Home, this is a useless page.</h1>
-        </div>
+        <AllStatsPage/>
     );
 }
 
@@ -59,7 +58,7 @@ function GlobalNav() {
             <Link href="/player" color="rgb(255,255,255)" underline="hover">Player Stats</Link>
           </Button>
           <Button>
-            <Link href="/stats" color="rgb(255,255,255)" underline="hover">All Stats</Link>
+            <Link href="/history" color="rgb(255,255,255)" underline="hover">History</Link>
           </Button>
         </Toolbar>
       </AppBar>
