@@ -101,9 +101,38 @@ function EloTable (props)
         (<div>oopsie woopsie lil fucky wucky</div>);
 }
 
+
+function CreateColourMap(user_data)
+{
+    const colour_keys =
+    {
+        "callum": "#ff6900",
+        "marin" : "#008000",
+        "johnny" : "#800080"
+    };
+
+    var other_colours = ["#ff3a2a", "#ff0044", "#f4005f", "#dd007b", "#ba0097", "#8600b0", "#0a0ac4"];
+
+    for (const name in user_data) 
+    {
+        if (!(name in colour_keys))
+        {
+            if (other_colours.length < 1)
+                other_colours.push("#"+Math.floor(Math.random()*16777215).toString(16));
+            colour_keys[name] = other_colours.pop();
+        }
+    }
+
+    return colour_keys;
+}
+
 function VictoryHistoricalElo (props)
 {
+
     const user_data = props.user_data;
+    const colour_keys = CreateColourMap(user_data);
+
+
     if (user_data&& Object.keys(user_data).length > 0)
     {
         return (
@@ -113,7 +142,7 @@ function VictoryHistoricalElo (props)
             >
                 {Object.keys(user_data).map(name => (
                     <VictoryGroup
-                        color={"#"+Math.floor(Math.random()*16777215).toString(16)}
+                        color={colour_keys[name]}
                         labels={({datum}) => `${name}: ${datum.elo}`}
                         tickFormat={({datum}) => new Date(datum.time).getDate()}
                         labelComponent={
